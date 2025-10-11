@@ -1,0 +1,11 @@
+# PostgreSQL Database Configuration
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=mydatabase
+
+# Container Configuration
+CONTAINER_NAME=pgvector_age
+POSTGRES_PORT=5432
+
+# Docker Volume Path (adjust as needed for your system, below is macos/linux example)
+POSTGRES_DATA_PATH=~/.docker_volumes/${CONTAINER_NAME}
