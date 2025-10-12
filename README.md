@@ -37,9 +37,11 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=mydatabase
 
-# Data persistence path (absolute or relative)
-POSTGRES_DATA_PATH=~/.docker_volumes/postgres
+# Data persistence path (must be absolute path)
+POSTGRES_DATA_PATH=/Users/your-username/.docker_volumes/postgres
 ```
+
+**Important:** Use absolute paths for `POSTGRES_DATA_PATH`. Replace `/Users/your-username` with your actual home directory path. You can find your home directory by running `echo $HOME` in terminal.
 
 ### 2. Run Setup
 
@@ -148,11 +150,13 @@ $$) as (a agtype);
 | `POSTGRES_USER` | Database username | `postgres` |
 | `POSTGRES_PASSWORD` | Database password | `postgres` |
 | `POSTGRES_DB` | Database name | `mydatabase` |
-| `POSTGRES_DATA_PATH` | Data persistence path | `~/.docker_volumes/postgres` |
+| `POSTGRES_DATA_PATH` | Data persistence path (absolute) | `/Users/your-username/.docker_volumes/postgres` |
 
 ### Data Persistence
 
 The PostgreSQL data is persisted in the directory specified by `POSTGRES_DATA_PATH`. This ensures your data survives container restarts and rebuilds.
+
+**Important:** `POSTGRES_DATA_PATH` must be an absolute path. Docker Compose does not expand `~` (tilde) or other shell variables. Use the full path to your desired location.
 
 ## Extensions Included
 
@@ -171,9 +175,11 @@ The PostgreSQL data is persisted in the directory specified by `POSTGRES_DATA_PA
 ### Permission Issues
 If you encounter permission issues with the data directory:
 ```bash
-sudo chown -R $(whoami) ~/.docker_volumes/postgres
-# Or for your specific POSTGRES_DATA_PATH:
-sudo chown -R $(whoami) $POSTGRES_DATA_PATH
+# Fix permissions for your specific POSTGRES_DATA_PATH:
+sudo chown -R $(whoami) "$POSTGRES_DATA_PATH"
+
+# Example for default location:
+sudo chown -R $(whoami) /Users/$(whoami)/.docker_volumes/postgres
 ```
 
 ### Container Won't Start
@@ -181,6 +187,14 @@ Check the logs:
 ```bash
 docker-compose logs postgres
 ```
+
+### Path Issues with Tilde (~)
+If you see a literal `~` directory created in your project folder, it means you're using `~` in your `POSTGRES_DATA_PATH` instead of an absolute path. 
+
+To fix:
+1. Update your `.env` file to use absolute paths
+2. Remove the incorrect directory: `rm -rf ~/path/to/project/~`
+3. Run the setup script again
 
 ### Extensions Not Available
 Verify extensions are installed:

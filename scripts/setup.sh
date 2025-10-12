@@ -14,7 +14,15 @@ fi
 # Check if POSTGRES_DATA_PATH is set
 if [ -z "$POSTGRES_DATA_PATH" ]; then
   echo "Error: POSTGRES_DATA_PATH environment variable is not set."
-  echo "Please set it in your .env file."
+  echo "Please set it in your .env file using an absolute path."
+  exit 1
+fi
+
+# Validate that POSTGRES_DATA_PATH is an absolute path
+if [[ ! "$POSTGRES_DATA_PATH" = /* ]]; then
+  echo "Error: POSTGRES_DATA_PATH must be an absolute path."
+  echo "Current value: $POSTGRES_DATA_PATH"
+  echo "Please update your .env file to use an absolute path (starting with /)."
   exit 1
 fi
 
