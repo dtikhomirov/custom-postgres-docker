@@ -69,7 +69,7 @@ fi
 
 # Check installed extensions
 echo "Checking installed extensions..."
-if docker exec ${CONTAINER_NAME} psql -U root -d root -c "SELECT extname, extversion FROM pg_extension;"; then
+if docker exec ${CONTAINER_NAME} psql -U root -d ${POSTGRES_DB} -c "SELECT extname, extversion FROM pg_extension;"; then
   echo "✅ Extensions query executed successfully"
 else
   echo "❌ Error: Failed to query extensions. Check database connection and permissions."
