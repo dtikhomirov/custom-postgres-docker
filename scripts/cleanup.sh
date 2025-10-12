@@ -26,15 +26,27 @@ echo "Removing unused volumes..."
 docker volume prune -f
 
 # Ask user if they want to remove the data directory
-if [ -n "$POSTGRES_DATA_PATH" ] && [ -d "$POSTGRES_DATA_PATH" ]; then
-  echo ""
-  read -p "Do you want to remove the PostgreSQL data directory ($POSTGRES_DATA_PATH)? [y/N]: " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Removing PostgreSQL data directory: $POSTGRES_DATA_PATH"
-    rm -rf "$POSTGRES_DATA_PATH"
+if [ -n "$POSTGRES_DATA_PATH" ]; then
+  # Expand the tilde to the full path
+  EXPANDED_PATH=$(eval echo "$POSTGRES_DATA_PATH")
+  
+  if [ -d "$EXPANDED_PATH" ]; then
+    echo ""
+    read -p "Do you want to remove the PostgreSQL data directory ($POSTGRES_DATA_PATH)? [y/N]: " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo "Removing PostgreSQL data directory: $EXPANDED_PATH"
+      rm -rf "$EXPANDED_PATH"
+      if [ $? -eq 0 ]; then
+        echo "✅ Directory successfully removed"
+      else
+        echo "❌ Failed to remove directory"
+      fi
+    else
+      echo "Keeping PostgreSQL data directory: $EXPANDED_PATH"
+    fi
   else
-    echo "Keeping PostgreSQL data directory: $POSTGRES_DATA_PATH"
+    echo "PostgreSQL data directory does not exist: $POSTGRES_DATA_PATH"
   fi
 fi
 
